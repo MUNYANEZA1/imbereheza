@@ -1,0 +1,116 @@
+{
+  "dashboard": {
+    "title": "Member Dashboard",
+    "welcome": "Welcome back",
+    "pending_requests": "You have",
+    "pending_requests_suffix": "pending loan request(s) under review",
+    "view_requests": "View requests"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "my_loans": "My Loans",
+    "my_repayments": "My Repayments",
+    "my_profile": "My Profile",
+    "request_loan": "Request a Loan",
+    "logout": "Logout"
+  },
+  "cards": {
+    "total_loans": "My Total Loans",
+    "total_borrowed": "Total Borrowed",
+    "total_interest": "Total Interest",
+    "total_repaid": "Total Repaid",
+    "total_amount_to_pay": "Total Amount to Pay",
+    "remaining_balance": "Remaining Balance"
+  },
+  "buttons": {
+    "request_loan": "Request a Loan",
+    "view_loans": "My Loans",
+    "view_repayments": "My Repayments",
+    "change_password": "Change Password",
+    "profile": "Profile"
+  },
+  "profile": {
+    "title": "My Profile",
+    "full_name": "Full Name",
+    "username": "Username",
+    "national_id": "National ID",
+    "phone": "Phone",
+    "gender": "Gender",
+    "address": "Address",
+    "member_since": "Member Since",
+    "change_password": "Change Password",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm New Password",
+    "update_password": "Update Password"
+  },
+  "loans": {
+    "title": "My Loans",
+    "no_loans": "No loans found",
+    "loan_id": "Loan ID",
+    "amount": "Amount",
+    "interest_rate": "Interest Rate",
+    "interest_amount": "Interest Amount",
+    "total_payable": "Total Payable",
+    "date": "Date",
+    "due_date": "Due Date",
+    "purpose": "Purpose",
+    "status": "Status",
+    "loan_breakdown": "Loan Breakdown Details",
+    "principal": "Principal Amount",
+    "total": "Total"
+  },
+  "repayments": {
+    "title": "My Repayments",
+    "no_repayments": "No repayments found",
+    "payment_id": "Payment ID",
+    "loan_id": "Loan ID",
+    "amount_paid": "Amount Paid",
+    "payment_date": "Payment Date",
+    "member": "Member",
+    "remaining": "Remaining"
+  },
+  "requests": {
+    "title": "My Loan Requests",
+    "request_loan_form": "Request a Loan",
+    "amount_requested": "Amount Requested (RWF)",
+    "purpose": "Purpose",
+    "repayment_period": "Repayment Period (months)",
+    "preferred_start_date": "Preferred Start Date",
+    "additional_notes": "Additional Notes",
+    "submit": "Submit Loan Request",
+    "my_requests": "My Loan Requests",
+    "request_date": "Request Date",
+    "status": "Status",
+    "reason": "Reason",
+    "admin_comment": "Admin Comment",
+    "no_requests": "You haven't submitted any loan requests yet."
+  },
+  "common": {
+    "rwf": "RWF",
+    "yes": "Yes",
+    "no": "No",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "edit": "Edit",
+    "delete": "Delete",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "pending": "Pending",
+    "completed": "Completed",
+    "n_a": "N/A",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "english": "English",
+    "kinyarwanda": "Kinyarwanda"
+  },
+  "navbar": {
+    "quick_search": "Quick search...",
+    "search": "Search",
+    "members": "Members",
+    "loans": "Loans",
+    "requests": "Requests"
+  }
+}

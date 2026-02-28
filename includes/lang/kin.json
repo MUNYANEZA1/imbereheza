@@ -1,0 +1,116 @@
+{
+  "dashboard": {
+    "title": "Dashibodi y'Umunyamuryango",
+    "welcome": "Murakaza neza",
+    "pending_requests": "Ufite",
+    "pending_requests_suffix": "ubusabe butararebwa",
+    "view_requests": "Reba ubusabe"
+  },
+  "menu": {
+    "dashboard": "Dashibodi",
+    "my_loans": "Inguzanyo Zanjye",
+    "my_repayments": "Ubwishyu Bwanjye",
+    "my_profile": "Umwirondoro Wanjye",
+    "request_loan": "Saba Inguzanyo",
+    "logout": "Sohoka"
+  },
+  "cards": {
+    "total_loans": "Inguzanyo Zose",
+    "total_borrowed": "Amafaranga Yose Yafashwe",
+    "total_interest": "Inyungu Yose",
+    "total_repaid": "Amafaranga Yamaze Kwishyurwa",
+    "total_amount_to_pay": "Amafaranga Yose Agomba Kwishyurwa",
+    "remaining_balance": "Asigaye Kwishyurwa"
+  },
+  "buttons": {
+    "request_loan": "Saba Inguzanyo",
+    "view_loans": "Reba Inguzanyo",
+    "view_repayments": "Reba Ubwishyu",
+    "change_password": "Hindura Ijambo ry'Ibanga",
+    "profile": "Umwirondoro"
+  },
+  "profile": {
+    "title": "Umwirondoro Wanjye",
+    "full_name": "Amazina Yuzuye",
+    "username": "Izina rya Konti",
+    "national_id": "Indangamuntu",
+    "phone": "Telefone",
+    "gender": "Igitsina",
+    "address": "Aderesi",
+    "member_since": "Umunyamuryango kuva",
+    "change_password": "Hindura Ijambo ry'Ibanga",
+    "current_password": "Ijambo ry'Ibanga Risanzwe",
+    "new_password": "Ijambo ry'Ibanga Rishya",
+    "confirm_password": "Emeza Ijambo ry'Ibanga Rishya",
+    "update_password": "Vugurura Ijambo ry'Ibanga"
+  },
+  "loans": {
+    "title": "Inguzanyo Zanjye",
+    "no_loans": "Nta nguzanyo ufite",
+    "loan_id": "Nomero y'Inguzanyo",
+    "amount": "Amafaranga",
+    "interest_rate": "Igipimo cy'Inyungu",
+    "interest_amount": "Amafaranga y'Inyungu",
+    "total_payable": "Amafaranga Yose Agomba Kwishyurwa",
+    "date": "Itariki",
+    "due_date": "Itariki ntarengwa",
+    "purpose": "Impamvu",
+    "status": "Imiterere",
+    "loan_breakdown": "Isesengura ry'Inguzanyo",
+    "principal": "Amafaranga Fatizo",
+    "total": "Igiteranyo"
+  },
+  "repayments": {
+    "title": "Ubwishyu Bwanjye",
+    "no_repayments": "Nta bwishyu burakorwa",
+    "payment_id": "Nomero y'Ubwishyu",
+    "loan_id": "Nomero y'Inguzanyo",
+    "amount_paid": "Amafaranga Yishyuwe",
+    "payment_date": "Itariki yo Kwishyura",
+    "member": "Umunyamuryango",
+    "remaining": "Asigaye"
+  },
+  "requests": {
+    "title": "Ubusabe Bwanjye",
+    "request_loan_form": "Ifishi yo Gusaba Inguzanyo",
+    "amount_requested": "Amafaranga Asabwa (RWF)",
+    "purpose": "Impamvu",
+    "repayment_period": "Igihe cyo Kwishyura (amezi)",
+    "preferred_start_date": "Itariki wifuza gutangiriraho",
+    "additional_notes": "Ibindi bisobanuro",
+    "submit": "Ohereza Ubusabe",
+    "my_requests": "Ubusabe Bwanjye",
+    "request_date": "Itariki y'Ubusabe",
+    "status": "Imiterere",
+    "reason": "Impamvu",
+    "admin_comment": "Igitekerezo cya Admin",
+    "no_requests": "Nta busabe bwa nguzanyo ufite"
+  },
+  "common": {
+    "rwf": "RWF",
+    "yes": "Yego",
+    "no": "Oya",
+    "save": "Bika",
+    "cancel": "Hagarika",
+    "back": "Subira inyuma",
+    "edit": "Hindura",
+    "delete": "Siba",
+    "approved": "Byemejwe",
+    "rejected": "Byanzwe",
+    "pending": "Bitegereje kwemezwa",
+    "completed": "Byarangiye",
+    "n_a": "Nta bihari",
+    "error": "Habaye Ikosa",
+    "success": "Byagenze neza",
+    "loading": "Birimo gufunguka...",
+    "english": "Icyongereza",
+    "kinyarwanda": "Ikinyarwanda"
+  },
+  "navbar": {
+    "quick_search": "Gushakisha vuba...",
+    "search": "Gushakisha",
+    "members": "Abayobozi",
+    "loans": "Imikobi",
+    "requests": "Inguzanyo"
+  }
+}
