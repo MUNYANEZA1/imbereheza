@@ -102,14 +102,66 @@ if (isset($_GET['download'])) {
         }
         fclose($output);
         exit();
+        
+    } elseif ($report_type === 'transactions') {
+        // Transactions CSV export
+        $stmt = $pdo->query("SELECT t.id, t.type, t.amount, t.description, t.transaction_date, m.full_name
+                             FROM transactions t
+                             LEFT JOIN loans l ON t.related_loan_id = l.id
+                             LEFT JOIN repayments r ON t.related_repayment_id = r.id
+                             LEFT JOIN members m ON COALESCE(l.member_id, (SELECT member_id FROM loans WHERE id = r.loan_id)) = m.id
+                             ORDER BY t.transaction_date DESC");
+        $transactions = $stmt->fetchAll();
+        
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="financial_transactions_report_' . date('Y-m-d') . '.csv"');
+        
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['ID', 'Type', 'Amount', 'Description', 'Date', 'Related Member']);
+        
+        foreach ($transactions as $row) {
+            fputcsv($output, [
+                $row['id'],
+                $row['type'],
+                $row['amount'],
+                $row['description'],
+                date('Y-m-d H:i:s', strtotime($row['transaction_date'])),
+                $row['full_name'] ?? 'N/A'
+            ]);
+        }
+        fclose($output);
+        exit();
+    }
+}
+
+// Handle manual transaction addition
+$message = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_transaction'])) {
+    $type = $_POST['type'];
+    $amount = floatval($_POST['amount']);
+    $description = trim($_POST['description']);
+    $transaction_date = $_POST['transaction_date'];
+    
+    if ($amount <= 0) {
+        $message = "Amount must be greater than 0.";
+    } elseif (empty($description)) {
+        $message = "Description is required.";
+    } else {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO transactions (type, amount, description, transaction_date) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$type, $amount, $description, $transaction_date]);
+            $message = "Transaction added successfully!";
+        } catch (Exception $e) {
+            $message = "Error adding transaction: " . $e->getMessage();
+        }
     }
 }
 
 // Financial Reports
 $total_members = $pdo->query("SELECT COUNT(*) FROM members")->fetchColumn();
-$total_loans_issued = $pdo->query("SELECT SUM(amount) FROM loans WHERE status = 'Approved' OR status = 'Completed'")->fetchColumn() ?: 0;
-$total_repaid = $pdo->query("SELECT SUM(amount_paid) FROM repayments")->fetchColumn() ?: 0;
-$outstanding_balance = $total_loans_issued - $total_repaid;
+$total_expense = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'expense'")->fetchColumn() ?: 0;
+$total_income = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'income'")->fetchColumn() ?: 0;
+$current_balance = $total_income - $total_expense;
 
 // Members with active loans
 $stmt = $pdo->query("SELECT m.full_name, l.amount, (SELECT SUM(amount_paid) FROM repayments WHERE loan_id = l.id) as paid 
@@ -127,12 +179,19 @@ $overdue_loans = $stmt->fetchAll();
 
 <h2>Financial Reports</h2>
 
+<?php if ($message): ?>
+    <div style="background: <?php echo strpos($message, 'successfully') !== false ? '#d4edda' : '#f8d7da'; ?>; border: 1px solid <?php echo strpos($message, 'successfully') !== false ? '#c3e6cb' : '#f5c6cb'; ?>; color: <?php echo strpos($message, 'successfully') !== false ? '#155724' : '#721c24'; ?>; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <?php echo htmlspecialchars($message); ?>
+    </div>
+<?php endif; ?>
+
 <div style="margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">
     <h3 style="margin-top: 0; margin-bottom: 15px;">Download Reports</h3>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
         <a href="reports.php?download=members" style="background: #28a745; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; font-weight: bold;">Download Members CSV</a>
         <a href="reports.php?download=loans" style="background: #0066cc; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; font-weight: bold;">Download Loans CSV</a>
         <a href="reports.php?download=repayments" style="background: #ff9800; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; font-weight: bold;">Download Repayments CSV</a>
+        <a href="reports.php?download=transactions" style="background: #17a2b8; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; font-weight: bold;">Download Financial Transactions CSV</a>
     </div>
 </div>
 
@@ -142,45 +201,73 @@ $overdue_loans = $stmt->fetchAll();
         <div class="value"><?php echo $total_members; ?></div>
     </div>
     <div class="card">
-        <h3>Total Loans Issued</h3>
-        <div class="value">RWF <?php echo number_format($total_loans_issued, 2); ?></div>
+        <h3>Total Expenses</h3>
+        <div class="value">RWF <?php echo number_format($total_expense, 2); ?></div>
     </div>
     <div class="card">
-        <h3>Total Money Repaid</h3>
-        <div class="value">RWF <?php echo number_format($total_repaid, 2); ?></div>
-    </div>
-    <div class="card">
-        <h3>Outstanding Balance</h3>
-        <div class="value">RWF <?php echo number_format($outstanding_balance, 2); ?></div>
+        <h3>Total Income</h3>
+        <div class="value">RWF <?php echo number_format($total_income, 2); ?></div>
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
-    <div>
-        <h3>Members with Active Loans</h3>
-        <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Member</th>
-                    <th>Loan Amount</th>
-                    <th>Paid</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($active_loan_members as $m): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($m['full_name']); ?></td>
-                    <td>RWF <?php echo number_format($m['amount'], 2); ?></td>
-                    <td>RWF <?php echo number_format($m['paid'] ?: 0, 2); ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        </div>
+<h3>Members with Active Loans</h3>
+<div class="table-responsive">
+<table>
+    <thead>
+        <tr>
+            <th>Member</th>
+            <th>Loan Amount</th>
+            <th>Paid</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($active_loan_members as $m): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($m['full_name']); ?></td>
+            <td>RWF <?php echo number_format($m['amount'], 2); ?></td>
+            <td>RWF <?php echo number_format($m['paid'] ?: 0, 2); ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+</div>
+
+<div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; text-align: center;">
+    <h3 style="margin: 0; color: #495057;">Current Company Balance</h3>
+    <div style="font-size: 24px; font-weight: bold; margin-top: 10px; color: <?php echo $current_balance >= 0 ? '#28a745' : '#dc3545'; ?>">
+        RWF <?php echo number_format($current_balance, 2); ?>
     </div>
-    <div>
-        <h3>Overdue Loans</h3>
+</div>
+
+<h3>Add Manual Transaction</h3>
+<div style="margin-bottom: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; border: 1px solid #ddd;">
+    <form method="POST" style="display: grid; grid-template-columns: 1fr 1fr 2fr 1fr auto; gap: 15px; align-items: end;">
+        <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Type</label>
+            <select name="type" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+            </select>
+        </div>
+        <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Amount (RWF)</label>
+            <input type="number" name="amount" step="0.01" min="0.01" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Description</label>
+            <input type="text" name="description" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="e.g., Initial capital, Donation, Office supplies">
+        </div>
+        <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Date</label>
+            <input type="date" name="transaction_date" value="<?php echo date('Y-m-d'); ?>" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div>
+            <button type="submit" name="add_transaction" style="background: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">Add Transaction</button>
+        </div>
+    </form>
+</div>
+
+<h3>Overdue Loans</h3>
         <div class="table-responsive">
         <table>
             <thead>

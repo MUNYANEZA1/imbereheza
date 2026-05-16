@@ -59,24 +59,38 @@ if ($request_id) {
             } elseif (strtotime($due_date) <= strtotime($loan_start_date)) {
                 $error_message = "Due date must be after the start date.";
             } else {
-                try {
-                    // Start transaction
-                    $pdo->beginTransaction();
+                // Check company balance
+                $total_income = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'income'")->fetchColumn() ?: 0;
+                $total_expense = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'expense'")->fetchColumn() ?: 0;
+                $current_balance = $total_income - $total_expense;
 
-                    // Create loan from request
-                    $stmt = $pdo->prepare("INSERT INTO loans (request_id, member_id, amount, interest_rate, loan_date, due_date, admin_comment, status) 
-                                           VALUES (?, ?, ?, ?, ?, ?, ?, 'Approved')");
-                    $stmt->execute([$request_id, $request['member_id'], $approved_amount, $interest_rate, $loan_start_date, $due_date, $admin_comment]);
+                if ($current_balance < $approved_amount) {
+                    $error_message = "Insufficient company balance. Current balance: RWF " . number_format($current_balance, 2) . ". Cannot approve loan of RWF " . number_format($approved_amount, 2) . ".";
+                } else {
+                    try {
+                        // Start transaction
+                        $pdo->beginTransaction();
 
-                    // Update request status
-                    $stmt = $pdo->prepare("UPDATE loan_requests SET status = 'Approved' WHERE id = ?");
-                    $stmt->execute([$request_id]);
+                        // Create loan from request
+                        $stmt = $pdo->prepare("INSERT INTO loans (request_id, member_id, amount, interest_rate, loan_date, due_date, admin_comment, status) 
+                                               VALUES (?, ?, ?, ?, ?, ?, ?, 'Approved')");
+                        $stmt->execute([$request_id, $request['member_id'], $approved_amount, $interest_rate, $loan_start_date, $due_date, $admin_comment]);
 
-                    $pdo->commit();
-                    $message = "Loan approved successfully. Loan has been created.";
-                } catch (PDOException $e) {
-                    $pdo->rollBack();
-                    $error_message = "Error approving loan. Please try again.";
+                        // Record expense transaction
+                        $loan_id = $pdo->lastInsertId();
+                        $stmt = $pdo->prepare("INSERT INTO transactions (type, amount, description, related_loan_id) VALUES ('expense', ?, 'Loan disbursement to member', ?)");
+                        $stmt->execute([$approved_amount, $loan_id]);
+
+                        // Update request status
+                        $stmt = $pdo->prepare("UPDATE loan_requests SET status = 'Approved' WHERE id = ?");
+                        $stmt->execute([$request_id]);
+
+                        $pdo->commit();
+                        $message = "Loan approved successfully. Loan has been created.";
+                    } catch (PDOException $e) {
+                        $pdo->rollBack();
+                        $error_message = "Error approving loan. Please try again.";
+                    }
                 }
             }
         } elseif ($action === 'reject') {

@@ -63,6 +63,21 @@ try {
         echo "<strong>admin_comment</strong> column already exists in loan_requests table<br>";
     }
 
+    // Create transactions table
+    $sql5 = "CREATE TABLE IF NOT EXISTS transactions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        type ENUM('income','expense') NOT NULL,
+        amount DECIMAL(15,2) NOT NULL,
+        description TEXT,
+        transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        related_loan_id INT NULL,
+        related_repayment_id INT NULL,
+        CONSTRAINT fk_transaction_loan FOREIGN KEY (related_loan_id) REFERENCES loans(id) ON DELETE SET NULL,
+        CONSTRAINT fk_transaction_repayment FOREIGN KEY (related_repayment_id) REFERENCES repayments(id) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+    $pdo->exec($sql5);
+    echo "<strong>transactions</strong> table created successfully!<br>";
+
     echo "<hr>";
     echo "<p style='color: green; font-weight: bold;'>Database migration completed successfully!</p>";
     echo "<p><a href='admin/dashboard.php'>Go to Admin Dashboard</a></p>";

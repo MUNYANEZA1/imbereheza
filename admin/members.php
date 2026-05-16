@@ -128,7 +128,7 @@ $members = $stmt->fetchAll();
 <div class="table-responsive">
 <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 5px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 30px;">
     <thead>
-        <tr style="background: #f5f5f5; border-bottom: 2px solid #ddd;">
+        <tr style="background: #398b6c; border-bottom: 2px solid #ddd;">
             <th style="padding: 12px; text-align: left;">ID</th>
             <th style="padding: 12px; text-align: left;">Full Name</th>
             <th style="padding: 12px; text-align: left;">National ID</th>

@@ -23,6 +23,11 @@ if (isset($_POST['record_repayment'])) {
         $stmt = $pdo->prepare("INSERT INTO repayments (loan_id, amount_paid, payment_date) VALUES (?, ?, ?)");
         $stmt->execute([$loan_id, $amount_paid, $payment_date]);
 
+        // Record income transaction
+        $repayment_id = $pdo->lastInsertId();
+        $stmt = $pdo->prepare("INSERT INTO transactions (type, amount, description, related_repayment_id) VALUES ('income', ?, 'Repayment from member', ?)");
+        $stmt->execute([$amount_paid, $repayment_id]);
+
         // Check if loan is fully repaid (principal + interest)
         $stmt = $pdo->prepare("SELECT amount, interest_rate, loan_date, due_date,
             (SELECT SUM(amount_paid) FROM repayments WHERE loan_id = ?) as total_paid

@@ -40,6 +40,14 @@ foreach ($all_loans as $loan) {
 }
 $total_amount_to_collect = $total_loan_amount + $total_interest_amount;
 
+// Company finances
+$total_income = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'income'")->fetchColumn() ?: 0;
+$total_expense = $pdo->query("SELECT SUM(amount) FROM transactions WHERE type = 'expense'")->fetchColumn() ?: 0;
+$current_balance = $total_income - $total_expense;
+
+// Recent transactions
+$recent_transactions = $pdo->query("SELECT * FROM transactions ORDER BY transaction_date DESC LIMIT 5")->fetchAll();
+
 // Recent loans
 $recent_loans = array_slice($all_loans, 0, 5);
 ?>
@@ -59,6 +67,7 @@ $recent_loans = array_slice($all_loans, 0, 5);
     <a href="loans.php" class="btn-info">Manage Loans</a>
     <!-- OTP Logs removed as per user request -->
     <a href="repayments.php" class="btn-success">View Repayments</a>
+    <a href="reports.php" class="btn-secondary">Financial Reports</a>
 </div>
 
 <div class="card-grid">
@@ -86,6 +95,46 @@ $recent_loans = array_slice($all_loans, 0, 5);
         <h3 style="color: #2e7d32;">Total to Collect (Principal + Interest)</h3>
         <div class="value" style="color: #2e7d32; font-size: 18px;">RWF <?php echo number_format($total_amount_to_collect, 2); ?></div>
     </div>
+</div>
+
+<h3>Company Finances</h3>
+<div class="card-grid">
+    <div class="card">
+        <h3>Current Balance</h3>
+        <div class="value" style="color: <?php echo $current_balance >= 0 ? '#2e7d32' : '#d32f2f'; ?>">RWF <?php echo number_format($current_balance, 2); ?></div>
+    </div>
+    <div class="card">
+        <h3>Total Income</h3>
+        <div class="value" style="color: #2e7d32;">RWF <?php echo number_format($total_income, 2); ?></div>
+    </div>
+    <div class="card">
+        <h3>Total Expenses</h3>
+        <div class="value" style="color: #d32f2f;">RWF <?php echo number_format($total_expense, 2); ?></div>
+    </div>
+</div>
+
+<h4>Recent Transactions</h4>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($recent_transactions as $trans): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars(date('Y-m-d H:i', strtotime($trans['transaction_date']))); ?></td>
+                    <td><?php echo htmlspecialchars(ucfirst($trans['type'])); ?></td>
+                    <td>RWF <?php echo number_format($trans['amount'], 2); ?></td>
+                    <td><?php echo htmlspecialchars($trans['description']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>
 
 <h3>Recent Loan Applications</h3>

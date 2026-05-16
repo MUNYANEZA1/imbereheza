@@ -14,3 +14,11 @@
 [2026-02-26 11:13:40] SendGrid success (202) to enezaa4@gmail.com OTP=61****
 [2026-02-26 11:18:21] DEBUG: About to send to enezaa4@gmail.com from nezaemma6@gmail.com
 [2026-02-26 11:18:23] SendGrid success (202) to enezaa4@gmail.com OTP=61****
+[2026-03-10 10:27:00] DEBUG: About to send to enezaa4@gmail.com from nezaemma6@gmail.com
+[2026-03-10 10:27:03] SendGrid success (202) to enezaa4@gmail.com OTP=41****
+[2026-03-10 10:30:52] DEBUG: About to send to enezaa4@gmail.com from nezaemma6@gmail.com
+[2026-03-10 10:30:53] SendGrid success (202) to enezaa4@gmail.com OTP=51****
+[2026-03-17 15:25:46] DEBUG: About to send to enezaa4@gmail.com from nezaemma6@gmail.com
+[2026-03-17 15:25:51] SendGrid success (202) to enezaa4@gmail.com OTP=00****
+[2026-03-17 15:29:54] DEBUG: About to send to enezaa4@gmail.com from nezaemma6@gmail.com
+[2026-03-17 15:29:56] SendGrid success (202) to enezaa4@gmail.com OTP=67****
